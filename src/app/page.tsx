@@ -69,7 +69,7 @@ export default function Home() {
   ];
 
   return (
-    <main className='min-h-screen max-h-max flex flex-col items-center gap-y-10'>
+    <main className='home-bg min-h-screen max-h-max flex flex-col items-center gap-y-10'>
       <header className='p-4 w-full'>
         <div className='flex gap-x-3 items-center w-full'>
           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/800px-ChatGPT_logo.svg.png" alt="logo" className='aspect-square' width={40} />

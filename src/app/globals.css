@@ -16,7 +16,11 @@
   }
 }
 
-body {
+.remove::-webkit-scrollbar {
+  display: none;
+}
+
+.home-bg{
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
