@@ -1,17 +1,39 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import jainLogo from "../../JainismLogo.svg";
 import Image from 'next/image';
 import { Toaster, toast } from 'react-hot-toast';
-
+import { CgLogOut } from "react-icons/cg";
+import { auth } from '@/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 
 const Chat = () => {
+    const redirect = useRouter();
+    const IsUserLoggedIn = () => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, see docs for a list of available properties
+                // https://firebase.google.com/docs/reference/js/auth.user
+                // ...
+            } else {
+                // User is signed out
+                redirect.push("/");
+                // ...
+            }
+        });
+    }
     const [removeAlert, setremoveAlert] = useState(false);
     const textAreaClick = () => {
         if (!removeAlert) {
             toast.error("Please Accept Terms & Condition and Privacy Policy");
         }
     }
+
+    useEffect(()=>{
+        IsUserLoggedIn();
+    },[auth.currentUser])
+
     return (
         <div>
             <Toaster />
@@ -22,6 +44,9 @@ const Chat = () => {
                     {/* <button className="btn btn-sm" onClick={() => setremoveAlert(true)}>Deny</button> */}
                     <button className="btn btn-sm btn-primary" onClick={() => setremoveAlert(true)}>Accept</button>
                 </div>
+            </div>
+            <div className='p-4'>
+                <CgLogOut size={32} color='grey' onClick={() => auth.signOut()} className="cursor-pointer" />
             </div>
             <div className='flex flex-col m-4'>
                 <div className="chat chat-start">
@@ -49,7 +74,7 @@ const Chat = () => {
                         Anakin
                         <time className="text-xs opacity-50 pl-1">12:46</time>
                     </div>
-                <div className="chat-bubble">I hate you!</div>
+                    <div className="chat-bubble">I hate you!</div>
                 </div>
             </div>
             <div onClick={textAreaClick} className='w-full'>

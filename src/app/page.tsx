@@ -2,7 +2,13 @@
 import { Typewriter } from 'react-simple-typewriter'
 import jainlogo from "../JainismLogo.svg";
 import Image from 'next/image';
+import { onAuthStateChanged, signInWithPopup } from 'firebase/auth';
+import { auth } from '@/firebase';
+import { GoogleAuthProvider } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 export default function Home() {
+  const redirect = useRouter();
   const jainQuotes = [
     "Non-violence is the highest religion.",
     "Live and let live.",
@@ -67,6 +73,46 @@ export default function Home() {
     "परस्परोपग्रहोपशमो वयं, जीवानामुक्तिरिति श्रुतिः।",
     "आत्मा सुखेन यस्यास्ति, तमाहुः पण्डितं बुधाः।"
   ];
+  const provider = new GoogleAuthProvider();
+  const IsUserLoggedIn = () => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/auth.user
+           redirect.push("/Chat");
+        // ...
+      } else {
+        // User is signed out
+        // ...
+      }
+    });
+  }
+  const googleLogin = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        // The signed-in user info.
+        console.log(result);
+        redirect.push('/Chat')
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
+      }).catch((error) => {
+        // Handle Errors here.
+        // const errorCode = error.code;
+        // const errorMessage = error.message;
+        // console.log({
+        //   error: error,
+        //   code: errorCode,
+        //   errorMessage
+        // });
+        console.log(error);
+        // ...
+      });
+  }
+
+  useEffect(()=>{
+    IsUserLoggedIn();
+  },[auth.currentUser]);
 
   return (
     <main className='home-bg min-h-screen max-h-max flex flex-col items-center gap-y-10'>
@@ -87,16 +133,16 @@ export default function Home() {
                 <h1 className="text-5xl font-bold">Jai Jinendra</h1>
                 <p className='text-sm font-semibold py-4'> Nurturing Solutions For Your Problems , by AI Chatbot Rooted in Jainism Wisdom. </p>
                 <p className="py-6 text-lg tracking-wider">
-                  <Typewriter 
-                   words={jainShlokas}
-                   delaySpeed={4000}
-                   cursorBlinking={true}
-                   deleteSpeed={50}
-                   loop={false}
-                   typeSpeed={100}
+                  <Typewriter
+                    words={jainShlokas}
+                    delaySpeed={4000}
+                    cursorBlinking={true}
+                    deleteSpeed={50}
+                    loop={false}
+                    typeSpeed={100}
                   />
                 </p>
-                <button className="btn btn-primary">Get Started</button>
+                <button className="btn btn-primary" onClick={googleLogin}>Get Started</button>
               </div>
             </div>
           </div>
