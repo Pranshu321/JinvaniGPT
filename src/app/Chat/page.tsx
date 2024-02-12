@@ -67,7 +67,7 @@ const Chat = () => {
                 {
                     genResponse.map((ele, idx) => (
 
-                        <div className='flex flex-col m-4'>
+                        <div key={idx+1} className='flex flex-col m-4'>
                             <div className={`chat chat-start ${question.length === 0 ? "hidden" : ""}`}>
                                 <div className="chat-image avatar">
                                     <div className="w-10 rounded-full">
