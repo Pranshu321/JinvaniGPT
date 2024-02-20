@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Toaster, toast } from 'react-hot-toast';
 import { CgLogOut } from "react-icons/cg";
 import { auth } from '@/firebase';
+import { db } from '@/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { LuSendHorizonal } from "react-icons/lu";
@@ -12,14 +13,28 @@ import axios from 'axios';
 import { GptResponse } from '@/types';
 import Markdown from 'react-markdown';
 import { Typewriter } from 'react-simple-typewriter';
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
 const Chat = () => {
     const redirect = useRouter();
+    const isTermsAccepted = () => {
+        const washingtonRef = doc(db, "users", auth.currentUser!.uid);
+        getDoc(washingtonRef).then((docSna) => {
+            if (docSna.exists() && docSna.data().checked) {
+                setremoveAlert(true);
+                return;
+            }
+        }).catch((error) => {
+            console.log("Error getting document:", error);
+        })
+    }
+
     const IsUserLoggedIn = () => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 // User is signed in, see docs for a list of available properties
                 // https://firebase.google.com/docs/reference/js/auth.user
+                isTermsAccepted();
                 // ...
             } else {
                 // User is signed out
@@ -28,6 +43,25 @@ const Chat = () => {
             }
         });
     }
+
+    const [removeAlert, setremoveAlert] = useState(false);
+
+    const updateTheCondition = async () => {
+        const washingtonRef = doc(db, "users", auth.currentUser!.uid);
+        getDoc(washingtonRef).then((docSna) => {
+            if (docSna.exists()) {
+                return;
+            }
+        }).catch((error) => {
+            console.log("Error getting document:", error);
+        })
+
+        await updateDoc(washingtonRef, {
+            checked: true
+        });
+        setremoveAlert(true);
+    }
+
     const [question, setquestion] = useState<Array<String>>([]);
     const [textareaInput, settextareainput] = useState("");
     const [genResponse, setgenResponse] = useState<Array<GptResponse>>([]);
@@ -41,7 +75,6 @@ const Chat = () => {
         const Chatresponse = await res.data;
         setgenResponse([...genResponse, Chatresponse]);
     }
-    const [removeAlert, setremoveAlert] = useState(false);
     const textAreaClick = () => {
         if (!removeAlert) {
             toast.error("Please Accept Terms & Condition and Privacy Policy");
@@ -60,7 +93,7 @@ const Chat = () => {
                 <span>Please Accept Terms & Condition Before Use</span>
                 <div>
                     {/* <button className="btn btn-sm" onClick={() => setremoveAlert(true)}>Deny</button> */}
-                    <button className="btn btn-sm btn-primary" onClick={() => setremoveAlert(true)}>Accept</button>
+                    <button className="btn btn-sm btn-primary" onClick={updateTheCondition}>Accept</button>
                 </div>
             </div>
             <div className='p-4'>

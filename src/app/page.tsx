@@ -3,10 +3,12 @@ import { Typewriter } from 'react-simple-typewriter'
 import jainlogo from "../JainismLogo.svg";
 import Image from 'next/image';
 import { onAuthStateChanged, signInWithPopup } from 'firebase/auth';
-import { auth } from '@/firebase';
+import { auth, db } from '@/firebase';
 import { GoogleAuthProvider } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { doc, setDoc } from "firebase/firestore";
+
 export default function Home() {
   const redirect = useRouter();
   const jainQuotes = [
@@ -74,12 +76,13 @@ export default function Home() {
     "आत्मा सुखेन यस्यास्ति, तमाहुः पण्डितं बुधाः।"
   ];
   const provider = new GoogleAuthProvider();
+
   const IsUserLoggedIn = () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/auth.user
-           redirect.push("/Chat");
+        redirect.push("/Chat");
         // ...
       } else {
         // User is signed out
@@ -93,7 +96,13 @@ export default function Home() {
         // This gives you a Google Access Token. You can use it to access the Google API.
         // The signed-in user info.
         console.log(result);
-        redirect.push('/Chat')
+        setDoc(doc(db, "users", result.user.uid), {
+          name: result.user.displayName,
+          email: result.user.email,
+          checked: false
+        }).then(() => {
+          redirect.push('/Chat')
+        });
         // IdP data available using getAdditionalUserInfo(result)
         // ...
       }).catch((error) => {
@@ -110,9 +119,9 @@ export default function Home() {
       });
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     IsUserLoggedIn();
-  },[auth.currentUser]);
+  }, [auth.currentUser]);
 
   return (
     <main className='home-bg min-h-screen max-h-max flex flex-col items-center gap-y-10'>
