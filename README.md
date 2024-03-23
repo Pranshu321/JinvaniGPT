@@ -7,7 +7,7 @@
     <img src="https://github.com/Pranshu321/JinvaniGPT/assets/86917304/79d38d40-13e3-43d8-8214-c7ae95e03a68" width="200px" alt="logo">
   </a>
   
-<h3 align="center">Bridging Tradition and Technology for Spiritual Growth ✨</h3>
+<h3 align="center">Bridging Tradition and Technology for Spiritual Growth ✔</h3>
 </div>
 
 --- 
