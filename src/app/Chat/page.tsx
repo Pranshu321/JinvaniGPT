@@ -184,7 +184,7 @@ const Chat = () => {
 
                 <textarea disabled={!removeAlert} onKeyDown={(e) => e.keyCode === 13 && e.ctrlKey ? onSend() : null} value={textareaInput} onChange={(e) => settextareainput(e.target.value)} className="textarea textarea-primary m-3 w-[95vw] lg:w-[97vw] outline-none focus:outline-none remove border-2 border-teal-500" placeholder="Provide your doubts and questions">
                 </textarea>
-                <div className='absolute pt-8 lg:right-7 right-7 md:right-9'>
+                <div className='absolute pt-8 lg:right-12 right-7 md:right-9'>
                     <LuSendHorizonal color='#14B8A6' className='cursor-pointer' onClick={onSend} size={30} />
                 </div>
             </div>
